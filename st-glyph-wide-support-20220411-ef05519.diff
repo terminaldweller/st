@@ -1,0 +1,67 @@
+diff --git a/x.c b/x.c
+@@ -1648,32 +1641,39 @@ xstartdraw(void)
+ void
+ xdrawline(Line line, int x1, int y1, int x2)
+ {
+-	int i, x, ox, numspecs;
++	int i, x, ox, numspecs, numspecs_cached;
+ 	Glyph base, new;
+-	XftGlyphFontSpec *specs = xw.specbuf;
+-
+-	numspecs = xmakeglyphfontspecs(specs, &line[x1], x2 - x1, x1, y1);
+-	i = ox = 0;
+-	for (x = x1; x < x2 && i < numspecs; x++) {
+-		new = line[x];
+-		if (new.mode == ATTR_WDUMMY)
+-			continue;
+-		if (selected(x, y1))
+-			new.mode ^= ATTR_REVERSE;
+-		if (i > 0 && ATTRCMP(base, new)) {
+-			xdrawglyphfontspecs(specs, base, i, ox, y1);
+-			specs += i;
+-			numspecs -= i;
+-			i = 0;
+-		}
+-		if (i == 0) {
+-			ox = x;
+-			base = new;
++	XftGlyphFontSpec *specs;
++
++	numspecs_cached = xmakeglyphfontspecs(xw.specbuf, &line[x1], x2 - x1, x1, y1);
++
++	/* Draw line in 2 passes: background and foreground. This way wide glyphs
++       won't get truncated (#223) */
++	for (int dmode = DRAW_BG; dmode <= DRAW_FG; dmode <<= 1) {
++		specs = xw.specbuf;
++		numspecs = numspecs_cached;
++		i = ox = 0;
++		for (x = x1; x < x2 && i < numspecs; x++) {
++			new = line[x];
++			if (new.mode == ATTR_WDUMMY)
++				continue;
++			if (selected(x, y1))
++				new.mode ^= ATTR_REVERSE;
++			if (i > 0 && ATTRCMP(base, new)) {
++				xdrawglyphfontspecs(specs, base, i, ox, y1, dmode);
++				specs += i;
++				numspecs -= i;
++				i = 0;
++			}
++			if (i == 0) {
++				ox = x;
++				base = new;
++			}
++			i++;
+ 		}
+-		i++;
++		if (i > 0)
++			xdrawglyphfontspecs(specs, base, i, ox, y1, dmode);
+ 	}
+-	if (i > 0)
+-		xdrawglyphfontspecs(specs, base, i, ox, y1);
+ }
+ 
+ void
+-- 
+2.35.1
+
