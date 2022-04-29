@@ -10,7 +10,7 @@ static char font[] =
 /* Spare fonts */
 static char *font2[] = {
     "DejaVuSansMono Nerd Font Mono:pixelsize=14;antialias=true;autohint=true",
-    "Hack Nerd Font Mono:pixelsize=11:antialias=true:autohint=true",
+    "Noto Color Emoji:pixelsize=11.3:antialias=true:autohint=true",
 };
 static int borderpx = 2;
 
