@@ -9,8 +9,8 @@ static char font[] =
     "DejaVuSansMono Nerd Font Mono:pixelsize=14;antialias=true;autohint=true";
 /* Spare fonts */
 static char *font2[] = {
-    "DejaVuSansMono Nerd Font Mono:pixelsize=14;antialias=true;autohint=true",
     "Noto Color Emoji:pixelsize=14:antialias=true:autohint=true",
+    "DejaVuSansMono Nerd Font Mono:pixelsize=11.3;antialias=true;autohint=true",
 };
 static int borderpx = 2;
 
